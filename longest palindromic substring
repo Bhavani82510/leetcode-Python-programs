@@ -1,0 +1,43 @@
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        if not s:
+            return ""
+
+        # Global variables to track the start and max length of the longest palindrome found
+        self.max_len = 0
+        self.start = 0
+
+        def expand_around_center(left, right):
+            """
+            Helper function to expand from a center (or center pair)
+            and update the longest palindrome found so far.
+            """
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                left -= 1
+                right += 1
+
+            # At the end of the loop, (left+1) and (right-1) are the boundaries
+            # of the palindrome. The length is (right-1) - (left+1) + 1 = right - left - 1
+            current_len = right - left - 1
+            
+            if current_len > self.max_len:
+                self.max_len = current_len
+                # Start index is left + 1
+                self.start = left + 1
+
+        n = len(s)
+        for i in range(n):
+            # 1. Odd-length palindromes (center is at s[i])
+            # Initial center: (i, i)
+            expand_around_center(i, i)
+
+            # 2. Even-length palindromes (center is between s[i] and s[i+1])
+            # Initial center: (i, i+1)
+            expand_around_center(i, i + 1)
+        
+        # Return the substring from self.start with length self.max_len
+        return s[self.start : self.start + self.max_len]
